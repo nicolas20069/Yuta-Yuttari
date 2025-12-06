@@ -1,0 +1,138 @@
+/* Contenedor principal del dashboard */
+.profile-container {
+  display: flex;
+  height: 100vh;
+  background: linear-gradient(to bottom left, #ffffff -20%, #30e852 70%);
+  color: rgb(3, 1, 1);
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Botón de menú (hamburguesa / cerrar) */
+.menu-toggle {
+  position: absolute;
+  top: 2rem;
+  left: 1.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 30;
+  color: #000;
+  transition: transform 0.3s ease;
+}
+
+.menu-toggle:hover {
+  color: whitesmoke;
+  transform: rotate(90deg);
+}
+
+/* Contenedor del sidebar */
+.sidebar-wrapper {
+  position: absolute;
+  top: 0;
+  left: -200px; /* Oculto por defecto */
+  width: 200px;
+  height: 100%;
+  transition: left 0.3s ease;
+  z-index: 20;
+}
+
+/* Cuando está abierto */
+.sidebar-wrapper.open {
+  left: 0;
+}
+
+/* Barra lateral */
+.sidebar {
+  font-weight: 1000;
+  background: linear-gradient(to bottom left, #7fe191 76%, #8acfa5 40%);
+  padding-top: 4rem;
+  font-family: "Bungee Shade";
+  font-size: clamp(2rem, 8vw, 2.3rem);
+  border-right: 2px solid #6ebaaba5;
+  height: 100%;
+  text-align: center;
+}
+
+/* Opciones del sidebar */
+.sidebar-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  font-size: 1rem;
+  justify-content: flex-start;
+}
+
+.sidebar-option:hover {
+  background-color: #d0f0d0;
+}
+
+/* Contenido principal */
+.main-content {
+  flex: 1;
+  padding: 1rem;
+  margin-left: 0;
+  overflow-y: auto;
+  transition: margin-left 0.3s ease;
+}
+
+/* Ajuste del título cuando el sidebar está abierto */
+.sidebar-wrapper.open ~ .main-content .title-dashboard {
+  margin-left: 200px;
+  margin-top: 1.4rem;
+}
+
+/* Título del dashboard */
+.title-dashboard {
+  display: flex;
+  justify-content: center;
+  font-family: "Momo Trust Display", sans-serif;
+  font-size: clamp(1.2rem, 5vw, 2rem);
+  margin-bottom: 1rem;
+}
+
+/* Media queries para pantallas pequeñas */
+@media (max-width: 430px) {
+  .dashboard-container {
+    flex-direction: column;
+  }
+
+  .sidebar-wrapper {
+    width: 100%;
+    left: -100%;
+    transition: left 0.3s ease;
+  }
+
+  .sidebar-wrapper.open {
+    left: 0;
+  }
+
+  .sidebar {
+    width: 100%;
+    font-size: clamp(2rem, 10vw, 3rem);
+    border-right: none;
+    border-bottom: 2px solid #6ebaaba5;
+    padding: 1rem 0;
+  }
+
+  .main-content {
+    padding: 1rem;
+    box-shadow: none;
+    max-width: 100%;
+    margin-left: 0;
+  }
+
+  .sidebar-wrapper.open ~ .main-content {
+    margin-left: 0;
+    margin-top: 2rem;
+  }
+
+  .title-dashboard,
+  p,
+  .recordar {
+    text-align: center;
+  }
+}

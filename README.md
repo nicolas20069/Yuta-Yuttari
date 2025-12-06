@@ -73,3 +73,21 @@ export default defineConfig([
   },
 ])
 ```
+
+/////////////////////////////////////////////
+
+comandos:
+
+* general: 
+- npm install
+- npm install express mongoose cors
+
+* Frontend
+- npm init -y
+- npm install axios react-router-dom
+
+* Backend 
+- npm install express cors dotenv bcrypt jsonwebtoken body-parser cookie-parser
+- npm install nodemon --save-dev
+
+
