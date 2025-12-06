@@ -11,6 +11,8 @@ import Dashboard from '../pages/Dashboard';
 import Profile from '../pages/Profile';
 import Home from '../pages/Home';
 import About from '../pages/About';
+import Contact from '../pages/Contact';
+import Rooms from '../pages/Rooms';
 
 
 // Componente que define las rutas de la aplicación 
@@ -18,7 +20,9 @@ const AppRoutes = () => {
   return (
     <Routes> {/* Contenedor de las rutas */}
       <Route path='/' element={<Home />} />
-      <Route path='/about' element={<About />} />
+      <Route path="/about" element={<About />} />
+      <Route path="/rooms" element={<Rooms />} />
+      <Route path="/contact" element={<Contact />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/profile" element={<Profile />} />

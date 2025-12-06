@@ -26,7 +26,7 @@ const Login = () => {
       console.log("Respuesta del login:", response);
 
       localStorage.setItem("authToken", response.token || "");
-      localStorage.setItem("userName", response.user.name || "Usuario"); // ✅ esta línea es clave
+      localStorage.setItem("userName", response.user?.name || "Usuario"); // ✅ esta línea es clave
       setSuccess(response.message);
       setEmail("");
       setPassword("");
