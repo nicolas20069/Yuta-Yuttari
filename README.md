@@ -89,5 +89,6 @@ comandos:
 * Backend 
 - npm install express cors dotenv bcrypt jsonwebtoken body-parser cookie-parser
 - npm install nodemon --save-dev
+- npm install jsonwebtoken
 
 
