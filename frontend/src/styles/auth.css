@@ -132,7 +132,6 @@
 .social-button.google {
   background-color: #ffffff;
   color: #000000;
-  margin-bottom: 1.2rem;
   border: 1px solid #ececec;
 }
 
@@ -161,10 +160,28 @@
     margin-bottom: 1rem;
   }
 
-  .input-field,
-  .auth-button,
-  .social-button {
+  .input-field {
     font-size: 1rem;
     padding: 0.6rem;
   }
+
+  .auth-button,
+  .social-button{
+    font-size: 0.9rem;
+  }
+
+  .opciones{
+    font-size: 0.8rem;
+  }
+
+  .auth-link-olv{
+    font-size: 0.8rem;
+  }
+
+  .auth-link{
+    font-size: 0.9rem;
+  }
+
 }
+
+

@@ -40,7 +40,7 @@ const Dashboard = () => {
 
             {/* Main content */}
             <div className="main-content">
-                <h2 className="title-dashboard">Bienvenido al Dashboard</h2>
+                <h2 className="title-dashboard">Bienvenido al Inicio</h2>
                 {/* Aquí va tu contenido */}
             </div>
         </div>
