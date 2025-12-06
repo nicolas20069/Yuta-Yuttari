@@ -25,9 +25,6 @@ const Dashboard = () => {
             {/* Sidebar */}
             <div className={`sidebar-wrapper ${isSidebarOpen ? "open" : ""}`}>
                 <div className="sidebar">
-                    <h2 className="sidebar-title">
-                        Yuta Yuttari
-                    </h2>
 
                     <div className="sidebar-option" onClick={() => navigate("/profile")}>
                         <AccountCircleIcon />

@@ -19,13 +19,13 @@ const pool = mysql.createPool({
 router.post("/register", async (req: Request, res: Response) => {
   let connection;
   try {
-    const { email, password } = req.body;
+    const { name, phone, email, password } = req.body;
 
     // Validaciones básicas
-    if (!email || !password) {
+    if (!name || !phone || !email || !password) {
       return res
         .status(400)
-        .json({ message: "Email y contraseña son requeridos" });
+        .json({ message: "Todos los campos son requeridos" });
     }
 
     if (password.length < 6) {
@@ -49,10 +49,10 @@ router.post("/register", async (req: Request, res: Response) => {
     // Hashear la contraseña
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Insertar nuevo usuario
+    // Insertar nuevo usuario con name y phone
     await connection.query(
-      "INSERT INTO users (email, password) VALUES (?, ?)",
-      [email, hashedPassword]
+      "INSERT INTO users (name, phone, email, password, created_at) VALUES (?, ?, ?, ?, NOW())",
+      [name, phone, email, hashedPassword]
     );
 
     return res.status(201).json({ message: "Usuario registrado exitosamente" });
