@@ -19,8 +19,6 @@ export const register = async (req: Request, res: Response) => {
   try {
     const { name, phone, email, password } = req.body;
 
-    console.log("Datos recibidos:", req.body); // <-- Debug
-
     if (!name || !phone || !email || !password) {
       return res
         .status(400)
