@@ -11,6 +11,7 @@ import Dashboard from '../pages/Dashboard';
 import Profile from '../pages/Profile';
 import Home from '../pages/Home';
 import About from '../pages/About';
+import Explore from '../pages/Explore';
 import Contact from '../pages/Contact';
 import Rooms from '../pages/Rooms';
 
@@ -20,6 +21,7 @@ const AppRoutes = () => {
   return (
     <Routes> {/* Contenedor de las rutas */}
       <Route path='/' element={<Home />} />
+      <Route path="/explore" element={<Explore />} />
       <Route path="/about" element={<About />} />
       <Route path="/rooms" element={<Rooms />} />
       <Route path="/contact" element={<Contact />} />
