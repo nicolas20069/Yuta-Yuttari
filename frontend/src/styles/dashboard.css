@@ -1,40 +1,44 @@
 /* Contenedor principal del dashboard */
 .dashboard-container {
   display: flex;
-  height: 100vh;
-  background: linear-gradient(to bottom left, #ffffff -20%, #30e852 70%);
-  color: rgb(3, 1, 1);
+  min-height: 100vh;
+  background: white;
+  color: #333;
   position: relative;
   overflow-x: hidden;
 }
 
 /* Botón de menú (hamburguesa / cerrar) */
 .menu-toggle {
-  position: absolute;
-  top: 2rem;
+  position: fixed;
+  top: 1.5rem;
   left: 1.5rem;
-  background: none;
+  background: white;
   border: none;
   cursor: pointer;
-  z-index: 30;
-  color: #000;
-  transition: transform 0.3s ease;
+  z-index: 40;
+  color: #002B5B;
+  padding: 8px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
 }
 
 .menu-toggle:hover {
-  color: whitesmoke;
-  transform: rotate(90deg);
+  background: #002B5B;
+  color: white;
+  transform: scale(1.1);
 }
 
 /* Contenedor del sidebar */
 .sidebar-wrapper {
-  position: absolute;
+  position: fixed;
   top: 0;
-  left: -200px; /* Oculto por defecto */
-  width: 200px;
-  height: 100%;
+  left: -280px;
+  width: 280px;
+  height: 100vh;
   transition: left 0.3s ease;
-  z-index: 20;
+  z-index: 30;
 }
 
 /* Cuando está abierto */
@@ -44,10 +48,45 @@
 
 /* Barra lateral */
 .sidebar {
-  font-weight: 1000;
-  background: linear-gradient(to bottom left, #7fe191 76%, #8acfa5 40%);
-  padding-top: 4rem;
-  font-family: "Bungee Shade";
+  background: linear-gradient(180deg, #002B5B 0%, #1565c0 100%);
+  padding: 1rem;
+  height: 100%;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+}
+
+.sidebar-header {
+  margin-bottom: 2rem;
+  padding: 1rem;
+  border-bottom: 2px solid rgba(255,255,255,0.2);
+}
+
+.sidebar-user-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.sidebar-user-info h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.sidebar-user-info p {
+  margin: 0;
+  font-size: 0.85rem;
+  opacity: 0.8;
+  word-break: break-word;
+}
+
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
   font-size: clamp(2rem, 8vw, 2.3rem);
   border-right: 2px solid #6ebaaba5;
   height: 100%;

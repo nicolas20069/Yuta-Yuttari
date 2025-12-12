@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Box, Button, Container, TextField, Typography, Paper, Divider, Stack } from '@mui/material';
 import { loginUser } from '../services/authService';
+import { useAuth } from '../context/AuthContext';
 import googleIcon from '../assets/icons_google.svg';
 import appleIcon from '../assets/icons_apple.svg';
 
@@ -11,6 +12,7 @@ const Login = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,18 +27,26 @@ const Login = () => {
       const response = await loginUser(email, password);
       console.log("Respuesta del login:", response);
 
-      localStorage.setItem("authToken", response.token || "");
-      localStorage.setItem("userName", response.user?.name || "Usuario"); // ✅ esta línea es clave
-      setSuccess(response.message);
-      setEmail("");
-      setPassword("");
-      setError("");
+      // loginUser ya guarda el token en localStorage vía setAuthToken
+      // Actualizamos el contexto con el usuario y token
+      if (response.user && response.accessToken) {
+        login(response.user, response.accessToken);
+        localStorage.setItem("userName", response.user?.name || "Usuario");
+        setSuccess('Login exitoso. Redirigiendo...');
+        setEmail("");
+        setPassword("");
+        setError("");
 
-      setTimeout(() => {
-        navigate("/dashboard");
-      }, 2000);
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 1500);
+      } else {
+        setError("Error en la respuesta del servidor. Por favor intenta nuevamente.");
+      }
     } catch (err: any) {
-      setError(err.response?.data?.message || "Credenciales incorrectas o error de conexión");
+      const errorMsg = err.response?.data?.message || err.message || "Credenciales incorrectas o error de conexión";
+      console.error("Error de login:", errorMsg);
+      setError(errorMsg);
       setEmail("");
       setPassword("");
     }

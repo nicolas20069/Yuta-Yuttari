@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Box, Button, Container, TextField, Typography, Paper, Divider, Stack } from '@mui/material';
 import { registerUser } from '../services/authService';
+import { getApiBaseUrl } from '../services/api';
 import googleIcon from '../assets/icons_google.svg';
 import appleIcon from '../assets/icons_apple.svg';
 
@@ -31,13 +32,13 @@ const Register = () => {
     }
 
     try {
-      const response = await registerUser({ name, email, phone, password });
-      setSuccess(response.message);
-      setError("");
-
-      setTimeout(() => {
-        navigate("/login");
-      }, 3000);
+        const response = await registerUser({ name, email, phone, password });
+        setSuccess('Registro exitoso. Redirigiendo a verificación...');
+        setError("");
+        // Redirect to verification pending page after 1 second
+        setTimeout(() => {
+          navigate('/verification-pending', { state: { email } });
+        }, 1000);
     } catch (err: any) {
       setError(err.response?.data?.message || "Error al registrar. Intenta nuevamente.");
       setSuccess("");

@@ -1,31 +1,25 @@
-import React, { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
-import axios from "axios";
+import React from "react";
+import { Navigate, useLocation } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { Box, CircularProgress } from "@mui/material";
 
 const ProtectedRoute = ({ children }: { children: React.ReactElement }) => {
-  const [isValid, setIsValid] = useState<boolean | null>(null);
-  const token = localStorage.getItem("authToken");
+  const { isAuthenticated, loading } = useAuth();
+  const location = useLocation();
 
-  useEffect(() => {
-    const verifyToken = async () => {
-      if (!token) {
-        setIsValid(false);
-        return;
-      }
-      try {
-        await axios.get("http://localhost:3000/api/user/perfil", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setIsValid(true);
-      } catch {
-        setIsValid(false);
-      }
-    };
-    verifyToken();
-  }, [token]);
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
 
-  if (isValid === null) return <p>Cargando...</p>;
-  return isValid ? children : <Navigate to="/login" />;
+  if (!isAuthenticated) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  return children;
 };
 
 export default ProtectedRoute;

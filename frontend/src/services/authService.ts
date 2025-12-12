@@ -1,4 +1,4 @@
-import api from "./api";
+import api, { setAuthToken } from "./api";
 
 // Interfaz para la respuesta del backend
 interface AuthResponse {
@@ -9,7 +9,8 @@ interface AuthResponse {
     name?: string;
     phone?: string;
   };
-  token?: string;
+  accessToken?: string;
+  tokenType?: string;
 }
 
 // Interfaz para el registro
@@ -22,9 +23,10 @@ interface RegisterPayload {
 
 // Función para registrar usuario (envía objeto completo)
 export const registerUser = async (
-  data: RegisterPayload
+  data: RegisterPayload 
 ): Promise<AuthResponse> => {
   const response = await api.post<AuthResponse>("/api/auth/register", data);
+  // Do not auto-save token on register — require email verification first
   return response.data;
 };
 
@@ -37,5 +39,23 @@ export const loginUser = async (
     email,
     password,
   });
+  if (response.data?.accessToken) setAuthToken(response.data.accessToken);
+  return response.data;
+};
+
+// Obtener perfil del usuario autenticado
+export const getProfile = async (): Promise<{ user: any }> => {
+  const response = await api.get('/api/auth/profile');
+  return response.data;
+};
+
+// Validar token / sesión
+export const validateToken = async (): Promise<{ valid: boolean; userId?: string }> => {
+  const response = await api.get('/api/auth/validate');
+  return response.data;
+};
+
+export const resendVerification = async (email: string) => {
+  const response = await api.post('/api/auth/resend', { email });
   return response.data;
 };

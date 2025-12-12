@@ -6,6 +6,8 @@ using React Router.
 import { Routes, Route } from 'react-router-dom';
 import Login from '../pages/Login';
 import Register from '../pages/Register';
+import Verify from '../pages/Verify';
+import VerificationPending from '../pages/VerificationPending';
 import ProtectedRoute from './ProtectedRoute';
 import Dashboard from '../pages/Dashboard';
 import Profile from '../pages/Profile';
@@ -27,6 +29,8 @@ const AppRoutes = () => {
       <Route path="/contact" element={<Contact />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/verify" element={<Verify />} />
+      <Route path="/verification-pending" element={<VerificationPending />} />
       <Route path="/profile" element={<Profile />} />
 
       {/* Ruta protegida */}
