@@ -9,12 +9,12 @@ import { envs } from './config';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-      type: 'mariadb',
+      type: 'mysql',
       host: envs.DB_HOST || 'localhost',
       port: envs.DB_PORT || 3306,
       username: envs.DB_USER || 'root',
       password: envs.DB_PASSWORD || '',
-      database: envs.DB_NAME || 'bdgestion_hoteles',
+      database: envs.DB_NAME || 'yuta_yuttari',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: envs.DB_SYNC || false, // Set to false in production
       logging: true,
