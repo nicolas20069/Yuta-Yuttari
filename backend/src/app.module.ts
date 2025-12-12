@@ -4,6 +4,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/user/user.module';
+import { EmailModule } from './modules/email/email.module';
 import { envs } from './config';
 
 @Module({
@@ -21,6 +22,7 @@ import { envs } from './config';
     }),
     AuthModule,
     UserModule,
+    EmailModule,
   ],
   controllers: [AppController],
   providers: [AppService],

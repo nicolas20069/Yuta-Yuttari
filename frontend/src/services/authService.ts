@@ -51,7 +51,7 @@ export const getProfile = async (): Promise<{ user: any }> => {
 
 // Validar token / sesión
 export const validateToken = async (): Promise<{ valid: boolean; userId?: string }> => {
-  const response = await api.get('/api/auth/validate');
+  const response = await api.get('/api/auth/verify-token');
   return response.data;
 };
 
