@@ -446,6 +446,169 @@ npm run test:watch        # Tests en modo watch
 - [Documentación de API](docs/API.md)
 - [Guía de Desarrollo](docs/DEVELOPMENT.md)
 - [Guía de Despliegue](docs/DEPLOYMENT.md)
+# Diccionario de Datos – Proyecto Yuta-Yuttari
+
+## 1. Introducción
+
+El diccionario de datos describe de manera detallada las entidades, atributos, relaciones y reglas de negocio del sistema **Yuta-Yuttari**, una aplicación de gestión de hoteles que incluye módulos de usuarios, hoteles, habitaciones, reservas y pagos. Este documento sirve como referencia para desarrolladores, analistas y usuarios, asegurando consistencia en el manejo de la información.
+
+---
+
+## 2. Tablas y Entidades Principales
+
+### 2.1 Tabla: `users` (Usuarios)
+
+**Descripción:** Almacena la información de los usuarios del sistema, incluyendo credenciales de acceso y datos de contacto.
+
+| Campo | Tipo de Dato | Longitud | Restricciones | Descripción Funcional |
+|-------|--------------|----------|---------------|----------------------|
+| `id` | VARCHAR | 36 | PK, NOT NULL | Identificador único del usuario (UUID) |
+| `name` | VARCHAR | 100 | NOT NULL | Nombre completo del usuario |
+| `password` | VARCHAR | 255 | NOT NULL | Contraseña encriptada con bcrypt |
+| `email` | VARCHAR | 100 | UNIQUE, NOT NULL | Correo electrónico del usuario |
+| `phone` | VARCHAR | 20 | NULL | Número de celular del usuario |
+| `role` | ENUM | - | NOT NULL | Rol del usuario: `USER`, `ADMIN` |
+| `created_at` | DATETIME | 6 | DEFAULT CURRENT_TIMESTAMP | Fecha y hora de creación del registro |
+| `updated_at` | DATETIME | 6 | DEFAULT CURRENT_TIMESTAMP ON UPDATE | Fecha y hora de última actualización |
+
+**Índices:**
+- PRIMARY KEY: `id`
+- UNIQUE INDEX: `email`
+
+**Relaciones:**
+- Un usuario puede tener múltiples reservas (1:N con `reservations`)
+
+---
+
+### 2.2 Tabla: `hotels` (Hoteles)
+
+**Descripción:** [Agregar descripción]
+
+| Campo | Tipo de Dato | Longitud | Restricciones | Descripción Funcional |
+|-------|--------------|----------|---------------|----------------------|
+| ... | ... | ... | ... | ... |
+
+---
+
+### 2.3 Tabla: `rooms` (Habitaciones)
+
+**Descripción:** [Agregar descripción]
+
+| Campo | Tipo de Dato | Longitud | Restricciones | Descripción Funcional |
+|-------|--------------|----------|---------------|----------------------|
+| ... | ... | ... | ... | ... |
+
+---
+
+### 2.4 Tabla: `reservations` (Reservas)
+
+**Descripción:** [Agregar descripción]
+
+| Campo | Tipo de Dato | Longitud | Restricciones | Descripción Funcional |
+|-------|--------------|----------|---------------|----------------------|
+| ... | ... | ... | ... | ... |
+
+---
+
+### 2.5 Tabla: `payments` (Pagos)
+
+**Descripción:** [Agregar descripción]
+
+| Campo | Tipo de Dato | Longitud | Restricciones | Descripción Funcional |
+|-------|--------------|----------|---------------|----------------------|
+| ... | ... | ... | ... | ... |
+
+---
+
+## 3. Observaciones y Reglas de Negocio
+
+### 3.1 Seguridad
+- Las contraseñas en `users.password` se almacenan encriptadas utilizando **bcrypt** con un salt rounds de 10.
+- Los tokens JWT tienen una expiración de 7 días por defecto.
+- Se requiere verificación de email antes de activar completamente una cuenta.
+
+### 3.2 Flujo de Reservas
+- El campo `status` en `reservations` controla el flujo de negocio del sistema:
+  - `pending` → Reserva creada pero pendiente de confirmación
+  - `confirmed` → Reserva confirmada y pago procesado
+  - `cancelled` → Reserva cancelada por el usuario o administrador
+  - `completed` → Reserva finalizada (check-out realizado)
+
+### 3.3 Roles y Permisos
+- **ADMIN**: 
+  - Puede crear, editar y eliminar hoteles
+  - Gestión completa de habitaciones
+  - Ver todas las reservas del sistema
+  - Gestión de usuarios
+- **USER**: 
+  - Puede crear reservas
+  - Ver y gestionar solo sus propias reservas
+  - Actualizar su perfil personal
+
+### 3.4 Validaciones
+- El email debe tener formato válido y ser único en el sistema
+- Los números de teléfono deben tener entre 10 y 20 caracteres
+- Las fechas de check-in deben ser anteriores a las de check-out
+- No se permiten reservas en habitaciones ya ocupadas en las mismas fechas
+
+---
+
+## 4. Diagrama de Relaciones (ER)
+```
+users (1) ──────< (N) reservations
+hotels (1) ──────< (N) rooms
+rooms (1) ──────< (N) reservations
+reservations (1) ──────< (N) payments
+```
+
+---
+
+## 5. Tipos de Datos Utilizados
+
+| Tipo | Descripción | Ejemplo |
+|------|-------------|---------|
+| VARCHAR | Cadena de texto de longitud variable | "Juan Pérez" |
+| DATETIME | Fecha y hora | 2024-12-13 15:30:00 |
+| ENUM | Lista predefinida de valores | "USER", "ADMIN" |
+| DECIMAL | Números decimales | 150.50 |
+| INT | Números enteros | 1, 2, 3 |
+| UUID | Identificador único universal | "a1b2c3d4-e5f6-..." |
+
+---
+
+## 6. Convenciones de Nomenclatura
+
+- **Tablas**: Plural, snake_case en minúsculas (`users`, `reservations`)
+- **Campos**: snake_case en minúsculas (`created_at`, `updated_at`)
+- **Claves primarias**: Siempre llamadas `id`
+- **Claves foráneas**: `nombre_tabla_id` (ej: `user_id`, `hotel_id`)
+- **Timestamps**: `created_at` y `updated_at` en todas las tablas
+
+---
+
+## 7. Versionamiento
+
+| Versión | Fecha | Autor | Cambios |
+|---------|-------|-------|---------|
+| 1.0 | 2024-12-13 | Pastuzan | Creación inicial del diccionario |
+
+---
+
+## 8. Conclusión
+
+Este diccionario de datos proporciona una visión completa de la estructura de información del sistema **Yuta-Yuttari**, asegurando claridad en el diseño, desarrollo y mantenimiento. Es un **documento vivo** que debe actualizarse conforme se agreguen nuevas entidades o reglas de negocio.
+
+---
+
+## 9. Referencias
+
+- [Documentación de TypeORM](https://typeorm.io/)
+- [Guía de Arquitectura del Proyecto](./ARCHITECTURE.md)
+- [Documentación de API](./API.md)
+
+---
+
+**Nota:** Este documento debe ser revisado y actualizado cada vez que se realicen cambios en el esquema de la base de datos.
 
 ## 🤝 Contribución
 
