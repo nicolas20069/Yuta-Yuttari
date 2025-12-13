@@ -469,8 +469,8 @@ Test: Añadir o modificar tests
 
 ## 👨‍💻 Autor
 
-**Pastuzan**
-- Instituto Tecnológico de Putumayo (ITP)
+**Estudiantes Uniputumayo**
+- Institucion Universitaria del putumayo(Uniputumayo)
 
 ## 📄 Licencia
 
