@@ -1,4 +1,5 @@
 import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { envs } from './config';
 import { Logger, ValidationPipe, VersioningType } from '@nestjs/common';
@@ -38,6 +39,15 @@ async function bootstrap() {
       transform: true,
     }),
   );
+
+  const config = new DocumentBuilder()
+    .setTitle('Yuta-Yuttari API')
+    .setDescription('API documentation for Yuta-Yuttari application')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/docs', app, document);
 
   await app.listen(envs.PORT);
   logger.log("App running on PORT:", envs.PORT);
