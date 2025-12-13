@@ -83,7 +83,7 @@ export class ReservaService {
   // ==================== OBTENER TODAS LAS RESERVAS ====================
   async findAll(): Promise<Reserva[]> {
     return this.reservaRepository.find({
-      relations: ['cliente', 'empleado', 'detalles', 'servicios', 'servicios.servicio'],
+      relations: ['cliente', 'detalles', 'servicios', 'servicios.servicio'],
       order: { reservaID: 'DESC' },
     });
   }
@@ -92,7 +92,7 @@ export class ReservaService {
   async findOne(id: number): Promise<Reserva> {
     const reserva = await this.reservaRepository.findOne({
       where: { reservaID: id },
-      relations: ['cliente', 'empleado', 'detalles', 'servicios', 'servicios.servicio'],
+      relations: ['cliente', 'detalles', 'servicios', 'servicios.servicio'],
     });
 
     if (!reserva) {
@@ -201,10 +201,10 @@ export class ReservaService {
   }
 
   // ==================== OBTENER RESERVAS POR CLIENTE ====================
-  async findByCliente(idCliente: number): Promise<Reserva[]> {
+  async findByCliente(idCliente: string): Promise<Reserva[]> {
     return this.reservaRepository.find({
       where: { idCliente },
-      relations: ['cliente', 'empleado', 'detalles', 'servicios', 'servicios.servicio'],
+      relations: ['cliente', 'detalles', 'servicios', 'servicios.servicio'],
       order: { fecha_inicio: 'DESC' },
     });
   }
@@ -213,7 +213,7 @@ export class ReservaService {
   async findByEmpleado(idEmpleado: number): Promise<Reserva[]> {
     return this.reservaRepository.find({
       where: { idEmpleado },
-      relations: ['cliente', 'empleado', 'detalles', 'servicios', 'servicios.servicio'],
+      relations: ['cliente', 'detalles', 'servicios', 'servicios.servicio'],
       order: { fecha_inicio: 'DESC' },
     });
   }
@@ -224,7 +224,7 @@ export class ReservaService {
       where: {
         fecha_inicio: Between(fechaInicio, fechaFin),
       },
-      relations: ['cliente', 'empleado', 'detalles', 'servicios', 'servicios.servicio'],
+      relations: ['cliente', 'detalles', 'servicios', 'servicios.servicio'],
       order: { fecha_inicio: 'ASC' },
     });
   }
@@ -233,7 +233,7 @@ export class ReservaService {
   async findByEstadoPago(estado: 'pendiente' | 'pagado' | 'cancelado'): Promise<Reserva[]> {
     return this.reservaRepository.find({
       where: { estado_pago: estado },
-      relations: ['cliente', 'empleado', 'detalles', 'servicios', 'servicios.servicio'],
+      relations: ['cliente', 'detalles', 'servicios', 'servicios.servicio'],
       order: { fecha_inicio: 'DESC' },
     });
   }
@@ -246,7 +246,7 @@ export class ReservaService {
     return this.reservaRepository
       .createQueryBuilder('reserva')
       .leftJoinAndSelect('reserva.cliente', 'cliente')
-      .leftJoinAndSelect('reserva.empleado', 'empleado')
+
       .leftJoinAndSelect('reserva.detalles', 'detalles')
       .leftJoinAndSelect('reserva.servicios', 'servicios')
       .leftJoinAndSelect('servicios.servicio', 'servicio')
@@ -268,7 +268,7 @@ export class ReservaService {
     return this.reservaRepository
       .createQueryBuilder('reserva')
       .leftJoinAndSelect('reserva.cliente', 'cliente')
-      .leftJoinAndSelect('reserva.empleado', 'empleado')
+
       .leftJoinAndSelect('reserva.detalles', 'detalles')
       .leftJoinAndSelect('reserva.servicios', 'servicios')
       .leftJoinAndSelect('servicios.servicio', 'servicio')

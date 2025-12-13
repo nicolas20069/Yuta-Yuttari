@@ -11,8 +11,9 @@ import {
 
 export class UpdateReservaDto {
   @IsOptional()
-  @IsNumber({}, { message: 'El ID del cliente debe ser un número' })
-  idCliente?: number;
+  @IsOptional()
+  @IsString({ message: 'El ID del cliente debe ser un texto (UUID)' })
+  idCliente?: string;
 
   @IsOptional()
   @IsNumber({}, { message: 'El ID del empleado debe ser un número' })

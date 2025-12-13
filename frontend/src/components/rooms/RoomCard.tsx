@@ -20,7 +20,7 @@ const RoomCard: React.FC<RoomCardProps> = ({ title, price, imageText }) => {
 
     const handleReservaClick = () => {
         if (!isAuthenticated) {
-            navigate('/login');
+            navigate('/login', { state: { from: { pathname: '/reservas' } } });
         } else {
             navigate('/reservas');
         }

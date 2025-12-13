@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Box, Button, Container, TextField, Typography, Paper, Divider, Stack } from '@mui/material';
 import { loginUser } from '../services/authService';
 import { useAuth } from '../context/AuthContext';
@@ -12,6 +12,7 @@ const Login = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
   const { login } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -37,8 +38,9 @@ const Login = () => {
         setPassword("");
         setError("");
 
+        const from = location.state?.from?.pathname || "/dashboard";
         setTimeout(() => {
-          navigate("/dashboard");
+            navigate(from, { replace: true });
         }, 1500);
       } else {
         setError("Error en la respuesta del servidor. Por favor intenta nuevamente.");

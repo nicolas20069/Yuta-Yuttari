@@ -2,17 +2,26 @@
 import api from "./api";
 
 // Interfaces
+// Interfaces
 export interface Reserva {
-  id: string;
-  userId: string;
-  fechaReserva: string; // ISO date string
-  horaInicio: string;
-  horaFin: string;
-  numeroPersonas: number;
-  estado: ReservaEstado;
-  observaciones?: string;
-  createdAt: string;
-  updatedAt: string;
+  id: string; // backend might send 'reservaID' but mapped or we adjust. Let's assume we map or backend returns object. Wait, backend entity has reservaID, but frontend used id. I should check if I need to map it. For now let's keep id if backend serializer handles it, or add reservaID. 
+  // actually backend entity has reservaID. I should probably use that or alias it.
+  // frontend previously had: id, userId, fechaReserva, horaInicio, horaFin, numeroPersonas, estado, observaciones
+  // backend has: reservaID, idCliente, idEmpleado, fecha_inicio, fecha_fin, costo_total, metodo_pago, estado_pago
+  
+  // Let's align with Backend Entity directly to avoid confusion.
+  reservaID: number;
+  idCliente: string;
+  idEmpleado: number;
+  fecha_inicio: string; // ISO date
+  fecha_fin: string; // ISO date
+  costo_total: number;
+  metodo_pago: string;
+  estado_pago: 'pendiente' | 'pagado' | 'cancelado'; 
+  
+  // Relations that might come back
+  detalles?: any[];
+  servicios?: any[];
   user?: {
     id: string;
     name: string;
@@ -22,35 +31,37 @@ export interface Reserva {
 }
 
 export const ReservaEstado = {
-  PENDIENTE: 'PENDIENTE',
-  CONFIRMADA: 'CONFIRMADA',
-  CANCELADA: 'CANCELADA',
-  COMPLETADA: 'COMPLETADA',
+  PENDIENTE: 'pendiente',
+  PAGADO: 'pagado',
+  CANCELADO: 'cancelado',
 } as const;
 
 export type ReservaEstado = (typeof ReservaEstado)[keyof typeof ReservaEstado];
 
 export interface CreateReservaDto {
-  fechaReserva: string; // "2025-12-15"
-  horaInicio: string; // "18:00"
-  horaFin: string; // "20:00"
-  numeroPersonas: number;
-  observaciones?: string;
+  idCliente: string;
+  idEmpleado: number;
+  fecha_inicio: string;
+  fecha_fin: string;
+  costo_total: number;
+  metodo_pago: string;
+  estado_pago?: string;
+  habitaciones: string[]; // Backend requires this
+  servicios?: number[];
 }
 
 export interface UpdateReservaDto {
-  fechaReserva?: string;
-  horaInicio?: string;
-  horaFin?: string;
-  numeroPersonas?: number;
-  observaciones?: string;
-  estado?: ReservaEstado;
+  fecha_inicio?: string;
+  fecha_fin?: string;
+  costo_total?: number;
+  metodo_pago?: string;
+  estado_pago?: string;
 }
 
 export interface ReservaFilters {
   fechaInicio?: string;
   fechaFin?: string;
-  estado?: ReservaEstado;
+  estado?: string;
   userId?: string;
 }
 

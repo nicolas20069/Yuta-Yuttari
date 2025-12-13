@@ -1,8 +1,7 @@
-// entities/reserva.entity.ts
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 import { DetalleReserva } from './detalle-reserva.entity';
 import { ReservaServicio } from './reserva-servicio.entity';
- 
+import { User } from '../../user/entities/user.entity';
 
 @Entity('reserva')
 export class Reserva {
@@ -10,7 +9,7 @@ export class Reserva {
   reservaID: number;
 
   @Column()
-  idCliente: number;
+  idCliente: string;
 
   @Column()
   idEmpleado: number;
@@ -39,5 +38,8 @@ export class Reserva {
 
   @OneToMany(() => ReservaServicio, reservaServicio => reservaServicio.reserva)
   servicios: ReservaServicio[];
-  user: any;
+
+  @ManyToOne(() => User, user => user.reservas)
+  @JoinColumn({ name: 'idCliente' })
+  cliente: User;
 }

@@ -1,8 +1,9 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createReserva } from '../services/reservas';
 import type { CreateReservaDto } from '../services/reservas';
 import { toast } from 'react-toastify';
+import { useAuth } from '../context/AuthContext';
 
 interface CreateReservaModalProps {
   onClose: () => void;
@@ -10,20 +11,32 @@ interface CreateReservaModalProps {
 }
 
 export const CreateReservaModal: React.FC<CreateReservaModalProps> = ({ onClose, onSuccess }) => {
+  const { user } = useAuth();
   const [formData, setFormData] = useState<CreateReservaDto>({
-    fechaReserva: '',
-    horaInicio: '',
-    horaFin: '',
-    numeroPersonas: 1,
-    observaciones: '',
+    idCliente: '', // Will be set from user
+    idEmpleado: 1, // Default
+    fecha_inicio: '',
+    fecha_fin: '',
+    costo_total: 0,
+    metodo_pago: 'efectivo',
+    estado_pago: 'pendiente',
+    habitaciones: ['101'], // Default or user input
+    servicios: []
   });
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  useEffect(() => {
+    if (user && user.id) {
+       // user.id is string (UUID). DTO now expects string.
+       setFormData(prev => ({ ...prev, idCliente: user.id || '' }));
+    }
+  }, [user]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: name === 'costo_total' ? Number(value) : value,
     }));
   };
 
@@ -32,18 +45,25 @@ export const CreateReservaModal: React.FC<CreateReservaModalProps> = ({ onClose,
     setLoading(true);
 
     // Validations
+    const start = new Date(formData.fecha_inicio);
+    const end = new Date(formData.fecha_fin);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const selectedDate = new Date(formData.fechaReserva + 'T00:00:00');
 
-    if (selectedDate < today) {
-        toast.error('La fecha de reserva no puede ser en el pasado');
+    if (start < today) {
+        toast.error('La fecha de inicio no puede ser en el pasado');
         setLoading(false);
         return;
     }
 
-    if (formData.horaInicio >= formData.horaFin) {
-        toast.error('La hora de fin debe ser posterior a la hora de inicio');
+    if (end <= start) {
+        toast.error('La fecha de fin debe ser posterior a la fecha de inicio');
+        setLoading(false);
+        return;
+    }
+
+    if (formData.costo_total < 0) {
+        toast.error('El costo total no puede ser negativo');
         setLoading(false);
         return;
     }
@@ -75,77 +95,83 @@ export const CreateReservaModal: React.FC<CreateReservaModalProps> = ({ onClose,
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Fecha Inicio
+              </label>
+              <input
+                type="date"
+                name="fecha_inicio"
+                required
+                min={new Date().toISOString().split('T')[0]}
+                value={formData.fecha_inicio}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Fecha Fin
+              </label>
+              <input
+                type="date"
+                name="fecha_fin"
+                required
+                min={formData.fecha_inicio || new Date().toISOString().split('T')[0]}
+                value={formData.fecha_fin}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          </div>
+
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Fecha de Reserva
-            </label>
-            <input
-              type="date"
-              name="fechaReserva"
-              required
-              min={new Date().toISOString().split('T')[0]}
-              value={formData.fechaReserva}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+             <label className="block text-sm font-medium text-gray-700 mb-1">
+               Habitaciones (ID)
+             </label>
+             {/* For now simple input, ideally a selector */}
+             <input
+               type="text"
+               name="habitaciones"
+               value={formData.habitaciones[0]}
+               onChange={(e) => setFormData(prev => ({ ...prev, habitaciones: [e.target.value] }))}
+               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+               placeholder="Ej: 101"
+             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Hora Inicio
-              </label>
-              <input
-                type="time"
-                name="horaInicio"
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                Costo Total
+                </label>
+                <input
+                type="number"
+                name="costo_total"
+                min="0"
+                step="0.01"
                 required
-                value={formData.horaInicio}
+                value={formData.costo_total}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+                />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Hora Fin
-              </label>
-              <input
-                type="time"
-                name="horaFin"
-                required
-                value={formData.horaFin}
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                Método de Pago
+                </label>
+                <select
+                name="metodo_pago"
+                value={formData.metodo_pago}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+                >
+                    <option value="efectivo">Efectivo</option>
+                    <option value="tarjeta">Tarjeta</option>
+                    <option value="transferencia">Transferencia</option>
+                </select>
             </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Número de Personas
-            </label>
-            <input
-              type="number"
-              name="numeroPersonas"
-              min="1"
-              required
-              value={formData.numeroPersonas}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Observaciones
-            </label>
-            <textarea
-              name="observaciones"
-              rows={3}
-              value={formData.observaciones}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Detalles adicionales..."
-            />
           </div>
 
           <div className="flex justify-end space-x-3 pt-4">

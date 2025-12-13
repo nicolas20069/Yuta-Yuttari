@@ -89,7 +89,7 @@ export class ReservaController {
 
   // Obtener reservas por cliente
   @Get('cliente/:idCliente')
-  findByCliente(@Param('idCliente', ParseIntPipe) idCliente: number) {
+  findByCliente(@Param('idCliente') idCliente: string) {
     return this.reservaService.findByCliente(idCliente);
   }
 

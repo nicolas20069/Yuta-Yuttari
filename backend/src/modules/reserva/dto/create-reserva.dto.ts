@@ -13,8 +13,8 @@ import {
 
 export class CreateReservaDto {
   @IsNotEmpty({ message: 'El ID del cliente es requerido' })
-  @IsNumber({}, { message: 'El ID del cliente debe ser un número' })
-  idCliente: number;
+  @IsString({ message: 'El ID del cliente debe ser un texto (UUID)' })
+  idCliente: string;
 
   @IsNotEmpty({ message: 'El ID del empleado es requerido' })
   @IsNumber({}, { message: 'El ID del empleado debe ser un número' })

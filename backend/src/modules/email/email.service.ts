@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 import { Transporter } from 'nodemailer';
+import { envs } from '../../config/envs';
 
 @Injectable()
 export class EmailService {
@@ -36,7 +37,8 @@ export class EmailService {
     name: string,
     token: string,
   ): Promise<void> {
-    const verificationUrl = `${process.env.FRONTEND_URL}/verify?token=${token}`;
+    this.logger.log(`Using FRONTEND_URL: ${envs.FRONTEND_URL}`);
+    const verificationUrl = `${envs.FRONTEND_URL}/verify?token=${token}`;
 
     const mailOptions = {
       from: process.env.EMAIL_FROM,
@@ -218,7 +220,7 @@ export class EmailService {
     name: string,
     token: string,
   ): Promise<void> {
-    const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${token}`;
+    const resetUrl = `${envs.FRONTEND_URL}/reset-password/${token}`;
 
     const mailOptions = {
       from: process.env.EMAIL_FROM,

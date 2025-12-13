@@ -63,7 +63,7 @@ export class User {
   @UpdateDateColumn()
   updatedAt: Date;
   
-  @OneToMany(() => Reserva, (reserva) => reserva.user)
+  @OneToMany(() => Reserva, (reserva) => reserva.cliente)
   reservas: Reserva[];
  
 }

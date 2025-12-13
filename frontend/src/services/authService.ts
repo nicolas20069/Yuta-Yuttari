@@ -4,7 +4,7 @@ import api, { setAuthToken } from "./api";
 interface AuthResponse {
   message: string;
   user?: {
-    id: number;
+    id: string;
     email: string;
     name?: string;
     phone?: string;
