@@ -1,14 +1,18 @@
+import { Reserva } from 'src/modules/reserva/entities/reserva.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToMany,
+  OneToMany,
 } from 'typeorm';
 
 export enum UserRole {
   USER = 'USER',
   ADMIN = 'ADMIN',
+  CLIENTE = 'CLIENTE',
 }
 
 @Entity('users')
@@ -34,6 +38,7 @@ export class User {
     default: UserRole.USER,
   })
   role: UserRole;
+
   @Column({ default: false, name: 'emailVerified' })
   emailVerified: boolean;
 
@@ -57,4 +62,8 @@ export class User {
 
   @UpdateDateColumn()
   updatedAt: Date;
+  
+  @OneToMany(() => Reserva, (reserva) => reserva.user)
+  reservas: Reserva[];
+ 
 }

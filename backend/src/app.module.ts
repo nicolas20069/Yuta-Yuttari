@@ -6,7 +6,9 @@ import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/user/user.module';
 import { EmailModule } from './modules/email/email.module';
 import { envs } from './config';
-
+import { ReservaModule } from './modules/reserva/reservas.module';
+ 
+ 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -23,6 +25,9 @@ import { envs } from './config';
     AuthModule,
     UserModule,
     EmailModule,
+    ReservaModule,
+ 
+    
   ],
   controllers: [AppController],
   providers: [AppService],

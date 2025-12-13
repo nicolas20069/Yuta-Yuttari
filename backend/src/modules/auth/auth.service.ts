@@ -152,7 +152,7 @@ export class AuthService {
 
     // Generate reset token
     const resetPasswordToken = crypto.randomBytes(32).toString('hex');
-    const resetPasswordExpires = new Date(Date.now() + 3600000); // 1 hour
+    const resetPasswordExpires = new Date(Date.now() + 86400000); // 24 hour
 
     await this.userService.update(user.id, {
       resetPasswordToken,
@@ -187,6 +187,8 @@ export class AuthService {
     }
 
     // Check if token is expired
+    console.log(`resetPasswordExpires from DB: ${user.resetPasswordExpires}`);
+    console.log(`Current Date: ${new Date()}`);
     if (!user.resetPasswordExpires || user.resetPasswordExpires < new Date()) {
       throw new BadRequestException('Reset token has expired');
     }

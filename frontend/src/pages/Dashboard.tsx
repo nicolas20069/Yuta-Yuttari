@@ -5,6 +5,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LogoutIcon from "@mui/icons-material/Logout";
 import HomeIcon from "@mui/icons-material/Home";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { useAuth } from "../context/AuthContext";
 import { Box, CircularProgress } from "@mui/material";
 import Hero from "../components/home/Hero";
@@ -54,9 +55,14 @@ const Dashboard = () => {
                     </div>
 
                     <div className="sidebar-menu">
-                        <div className="sidebar-option" onClick={() => { navigate("/"); setIsSidebarOpen(false); }}>
+                        <div className="sidebar-option" onClick={() => { navigate("/dashboard"); setIsSidebarOpen(false); }}>
                             <HomeIcon />
                             <span>Inicio</span>
+                        </div>
+
+                        <div className="sidebar-option" onClick={() => { navigate("/reservas"); setIsSidebarOpen(false); }}>
+                            <CalendarMonthIcon />
+                            <span>Reservar Ya</span>
                         </div>
 
                         <div className="sidebar-option" onClick={() => { navigate("/profile"); setIsSidebarOpen(false); }}>

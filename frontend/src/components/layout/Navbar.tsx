@@ -2,8 +2,19 @@ import React from 'react';
 import { AppBar, Toolbar, Button, Box, Container } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 
+import { useAuth } from '../../context/AuthContext';
+
 const Navbar: React.FC = () => {
     const navigate = useNavigate();
+    const { isAuthenticated } = useAuth(); // Get auth state
+
+    const handleReservaClick = () => {
+        if (!isAuthenticated) {
+            navigate('/reservas');
+        } else {
+            navigate('/login');
+        }
+    };
 
     return (
         <AppBar position="static" sx={{ backgroundColor: '#002B5B' }}>
@@ -73,7 +84,7 @@ const Navbar: React.FC = () => {
                                 textTransform: 'none',
                                 fontWeight: 'bold'
                             }}
-                            onClick={() => navigate('/login')} // Using login as reservation entry for now or a specific reservation page
+                            onClick={handleReservaClick}
                         >
                             Reserva Ya!
                         </Button>

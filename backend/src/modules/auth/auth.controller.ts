@@ -74,5 +74,6 @@ export class AuthController {
       resetPasswordDto.token,
       resetPasswordDto.newPassword,
     );
+    
   }
 }
