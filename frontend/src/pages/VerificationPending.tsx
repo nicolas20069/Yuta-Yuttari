@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Box, Button, Container, TextField, Typography, Paper, Alert, CircularProgress } from '@mui/material';
-import { resendVerification } from '../services/authService';
+import { resendVerificationEmail } from '../services/authService';
+ 
 
 const VerificationPending = () => {
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ const VerificationPending = () => {
     setResendError('');
 
     try {
-      const response = await resendVerification(email);
+      const response = await resendVerificationEmail(email);
       setResendMessage(response.message || 'Se envió un nuevo correo de verificación.');
       setTimeout(() => {
         setResendMessage('');

@@ -4,7 +4,7 @@ import api, { setAuthToken } from "./api";
 interface AuthResponse {
   message: string;
   user?: {
-    id: number;
+    id: string;
     email: string;
     name?: string;
     phone?: string;
@@ -57,5 +57,28 @@ export const validateToken = async (): Promise<{ valid: boolean; userId?: string
 
 export const resendVerification = async (email: string) => {
   const response = await api.post('/api/auth/resend', { email });
+  return response.data;
+};
+export const resendVerificationEmail = async (email: string) => {
+  const response = await api.post('/api/auth/resend', { email });
+  return response.data;
+};
+
+// Solicitar enlace de recuperación de contraseña
+export const forgotPassword = async (email: string) => {
+  const response = await api.post('/api/auth/forgot-password', { email });
+  return response.data;
+};
+
+export const resetPassword = async (token: string, newPassword: string) => {
+  const response = await api.post('/api/auth/reset-password', { 
+    token, 
+    newPassword  // ← Campo correcto según el DTO del backend
+  });
+  return response.data;
+};
+export const logoutUser = async () => {
+  const response = await api.post('/api/auth/logout');
+  setAuthToken(null);
   return response.data;
 };

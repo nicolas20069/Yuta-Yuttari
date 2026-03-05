@@ -1,3 +1,8 @@
+/* src/styles/dashboard.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* Contenedor principal del dashboard */
 .dashboard-container {
   display: flex;
@@ -56,6 +61,9 @@
   flex-direction: column;
   overflow-y: auto;
   box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+  font-size: clamp(2rem, 8vw, 2.3rem);
+  border-right: 2px solid #6ebaaba5;
+  text-align: center;
 }
 
 .sidebar-header {
@@ -87,11 +95,6 @@
   flex-direction: column;
   gap: 0.5rem;
 }
-  font-size: clamp(2rem, 8vw, 2.3rem);
-  border-right: 2px solid #6ebaaba5;
-  height: 100%;
-  text-align: center;
-}
 
 /* Opciones del sidebar */
 .sidebar-option {
@@ -106,7 +109,7 @@
 }
 
 .sidebar-option:hover {
-  background-color: #d0f0d0;
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 /* Contenido principal */

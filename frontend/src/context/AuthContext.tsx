@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { getProfile } from '../services/authService';
 import { setAuthToken } from '../services/api';
+import { toast } from 'react-toastify';
 
 interface User {
   id?: string;
@@ -58,6 +59,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem('auth_token', token);
     // Finally update user state
     setUser(userData);
+    toast.success(`¡Bienvenido, ${userData.name}!`);
     console.log('[AuthContext] User logged in successfully');
   };
 
