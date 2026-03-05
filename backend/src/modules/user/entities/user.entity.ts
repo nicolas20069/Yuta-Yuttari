@@ -34,8 +34,22 @@ export class User {
     default: UserRole.USER,
   })
   role: UserRole;
+  @Column({ default: false, name: 'emailVerified' })
+  emailVerified: boolean;
 
-  @Column({ default: true })
+  @Column({ nullable: true, name: 'emailVerificationToken' })
+  emailVerificationToken: string;
+
+  @Column({ type: 'timestamp', nullable: true, name: 'emailVerificationTokenExpires' })
+  emailVerificationTokenExpires: Date;
+
+  @Column({ nullable: true, name: 'resetPasswordToken' })
+  resetPasswordToken: string;
+
+  @Column({ type: 'timestamp', nullable: true, name: 'resetPasswordExpires' })
+  resetPasswordExpires: Date;
+
+  @Column({ default: true, name: 'isActive' })
   isActive: boolean;
 
   @CreateDateColumn()

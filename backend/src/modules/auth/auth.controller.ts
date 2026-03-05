@@ -1,6 +1,9 @@
-import { Controller, Post, Body, Get, UseGuards, HttpCode, HttpStatus, Query } from '@nestjs/common';
+import { 
+  Controller, Post, Body, Get, UseGuards, 
+  HttpCode, HttpStatus, Query, BadRequestException 
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { RegisterDto, LoginDto, ResendDto } from './dto';
+import { RegisterDto, LoginDto, ResendDto, ForgotPasswordDto, ResetPasswordDto } from './dto';
 import { JwtAuthGuard } from './guards';
 import { GetUser } from './decorators';
 import { User } from '../user/entities/user.entity';
@@ -39,25 +42,37 @@ export class AuthController {
     };
   }
 
+  // ✅ RUTA CORREGIDA - IMPORTANTE
   @Get('verify')
+  @HttpCode(HttpStatus.OK)
   async verifyEmail(@Query('token') token: string) {
+    console.log('🔍 Ruta /auth/verify llamada con token:', token); // Debug
+    
     if (!token) {
-      return { message: 'Token is required', status: 'error' };
+      throw new BadRequestException('Token de verificación requerido');
     }
-    try {
-      const result = await this.authService.verifyEmail(token);
-      return { ...result, status: 'success' };
-    } catch (err: any) {
-      return { 
-        message: err.message || 'Invalid or expired verification token',
-        status: 'error'
-      };
-    }
+    
+    return this.authService.verifyEmail(token);
   }
 
   @Post('resend')
   @HttpCode(HttpStatus.OK)
   async resend(@Body() body: ResendDto) {
     return this.authService.resendVerification(body.email);
+  }
+
+  @Post('forgot-password')
+  @HttpCode(HttpStatus.OK)
+  async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
+    return this.authService.forgotPassword(forgotPasswordDto.email);
+  }
+
+  @Post('reset-password')
+  @HttpCode(HttpStatus.OK)
+  async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
+    return this.authService.resetPassword(
+      resetPasswordDto.token,
+      resetPasswordDto.newPassword,
+    );
   }
 }

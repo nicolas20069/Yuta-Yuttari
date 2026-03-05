@@ -3,12 +3,15 @@ import {
   ConflictException,
   UnauthorizedException,
   Logger,
+  BadRequestException,
+  NotFoundException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { envs } from '../../config/envs';
-import { Resend } from 'resend';
 import * as bcrypt from 'bcrypt';
+import * as crypto from 'crypto';
 import { UserService } from '../user/user.service';
+import { EmailService } from '../email/email.service';
 import { RegisterDto, LoginDto } from './dto';
 import { User } from '../user/entities/user.entity';
 
@@ -19,6 +22,7 @@ export class AuthService {
   constructor(
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
+    private readonly emailService: EmailService,
   ) {}
 
   async register(registerDto: RegisterDto) {
@@ -33,6 +37,9 @@ export class AuthService {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Generate email verification token
+    const emailVerificationToken = crypto.randomBytes(32).toString('hex');
+
     // Create user as inactive until email verification
     const user = await this.userService.create({
       email,
@@ -40,105 +47,170 @@ export class AuthService {
       name,
       phone,
       isActive: false,
+      emailVerified: false,
+      emailVerificationToken,
     });
 
     this.logger.log(`New user registered: ${email}`);
 
-    // create verification token (expires in configured time)
-    const verificationToken = this.jwtService.sign({ sub: user.id } as any, ({ expiresIn: envs.JWT_EXPIRES_IN || '1d' } as any));
-
-    // Log verification link (in production send via email)
-    const backendBase = `http://localhost:${envs.PORT}`;
-    const verifyLink = `${backendBase}/api/auth/verify?token=${encodeURIComponent(verificationToken)}`;
-    this.logger.log(`Email verification link (dev): ${verifyLink}`);
-
-    // Send verification email if API key provided
-    if (envs.RESEND_API_KEY) {
-      try {
-        const resend = new Resend(envs.RESEND_API_KEY as string);
-        await resend.emails.send({
-          from: envs.EMAIL_FROM,
-          to: email,
-          subject: 'Verifica tu correo - Yuta Yuttari',
-          html: `<p>Hola ${user.name || ''},</p><p>Por favor verifica tu correo haciendo clic <a href="${verifyLink}">aquí</a>.</p><p>Si no solicitaste esto, ignora este mensaje.</p>`,
-        });
-        this.logger.log(`Verification email sent to ${email}`);
-      } catch (err) {
-        this.logger.error('Failed to send verification email', err);
-      }
-    } else {
-      this.logger.log('RESEND_API_KEY not set — verification email not sent automatically');
+    // Send verification email
+    try {
+      await this.emailService.sendVerificationEmail(
+        email,
+        name,
+        emailVerificationToken,
+      );
+      this.logger.log(`Verification email sent to ${email}`);
+    } catch (error) {
+      this.logger.error(`Failed to send verification email to ${email}:`, error);
+      // Don't throw error, user is created but email failed
     }
 
-    // Return user without password and the verification token (frontend can build URL)
-    const { password: _, ...userWithoutPassword } = user;
+    // Return user without password
+    const { password: _, emailVerificationToken: __, ...userWithoutSensitiveData } = user;
 
     return {
-      user: userWithoutPassword,
-      message: 'User created. Please verify your email before logging in.',
-      verificationToken,
+      user: userWithoutSensitiveData,
+      message: 'User created. Please check your email to verify your account.',
     };
   }
 
   async resendVerification(email: string) {
     const user = await this.userService.findByEmail(email);
     if (!user) {
-      throw new ConflictException('Email not registered');
+      throw new NotFoundException('Email not registered');
     }
-    if (user.isActive) {
+    if (user.emailVerified) {
       return { message: 'Account already verified' };
     }
 
-    const verificationToken = this.jwtService.sign({ sub: user.id } as any, ({ expiresIn: envs.JWT_EXPIRES_IN || '1d' } as any));
-    const backendBase = `http://localhost:${envs.PORT}`;
-    const verifyLink = `${backendBase}/api/auth/verify?token=${encodeURIComponent(verificationToken)}`;
+    // Generate new verification token
+    const emailVerificationToken = crypto.randomBytes(32).toString('hex');
+    await this.userService.update(user.id, { emailVerificationToken });
 
-    if (envs.RESEND_API_KEY) {
-      try {
-        const resend = new Resend(envs.RESEND_API_KEY as string);
-        await resend.emails.send({
-          from: envs.EMAIL_FROM,
-          to: email,
-          subject: 'Verifica tu correo - Yuta Yuttari',
-          html: `<p>Hola ${user.name || ''},</p><p>Por favor verifica tu correo haciendo clic <a href="${verifyLink}">aquí</a>.</p>`,
-        });
-        this.logger.log(`Verification email re-sent to ${email}`);
-      } catch (err) {
-        this.logger.error('Failed to resend verification email', err);
-      }
-    } else {
-      this.logger.log(`Resend skipped — link: ${verifyLink}`);
+    try {
+      await this.emailService.sendVerificationEmail(
+        email,
+        user.name,
+        emailVerificationToken,
+      );
+      this.logger.log(`Verification email re-sent to ${email}`);
+    } catch (error) {
+      this.logger.error(`Failed to resend verification email to ${email}:`, error);
+      throw new Error('Failed to send verification email');
     }
 
-    return { message: 'Verification email sent (if configured)' };
+    return { message: 'Verification email sent successfully' };
   }
 
   async verifyEmail(token: string) {
     try {
-      const payload: any = this.jwtService.verify(token);
-      const userId = payload.sub;
-      this.logger.log(`Verifying email for user ID: ${userId}`);
+      this.logger.log(`Attempting to verify email with token: ${token.substring(0, 10)}...`);
       
-      const user = await this.userService.findById(userId);
+      // Find user by verification token
+      const user = await this.userService.findOne({
+        where: { emailVerificationToken: token },
+      });
+
+      this.logger.log(`User found: ${user ? 'Yes' : 'No'}`);
+
       if (!user) {
-        this.logger.error(`User not found for ID: ${userId}`);
-        throw new Error('User not found');
+        this.logger.warn(`No user found with verification token`);
+        throw new BadRequestException('Invalid or expired verification token');
       }
-      
-      if (user.isActive) {
-        this.logger.log(`User ${userId} is already verified`);
+
+      if (user.emailVerified) {
+        this.logger.log(`User ${user.email} already verified`);
         return { message: 'Account already verified' };
       }
-      
-      this.logger.log(`Updating user ${userId} to isActive=true`);
-      const updatedUser = await this.userService.update(userId, { isActive: true });
-      this.logger.log(`User ${userId} verified successfully. isActive: ${updatedUser.isActive}`);
-      
-      return { message: 'Account verified successfully' };
+
+      // Update user
+      await this.userService.update(user.id, {
+        emailVerified: true,
+        isActive: true,
+        emailVerificationToken: undefined,
+      });
+
+      this.logger.log(`User ${user.email} (${user.id}) verified successfully`);
+
+      return { message: 'Account verified successfully. You can now log in.' };
     } catch (err) {
       this.logger.error('Email verification failed:', err);
       throw err;
     }
+  }
+
+  async forgotPassword(email: string) {
+    const user = await this.userService.findByEmail(email);
+    
+    // Don't reveal if user exists or not for security
+    if (!user) {
+      return { 
+        message: 'If the email exists, a password reset link has been sent.' 
+      };
+    }
+
+    // Generate reset token
+    const resetPasswordToken = crypto.randomBytes(32).toString('hex');
+    const resetPasswordExpires = new Date(Date.now() + 3600000); // 1 hour
+
+    await this.userService.update(user.id, {
+      resetPasswordToken,
+      resetPasswordExpires,
+    });
+
+    try {
+      await this.emailService.sendPasswordResetEmail(
+        email,
+        user.name,
+        resetPasswordToken,
+      );
+      this.logger.log(`Password reset email sent to ${email}`);
+    } catch (error) {
+      this.logger.error(`Failed to send password reset email to ${email}:`, error);
+      // Don't throw error for security reasons
+    }
+
+    return { 
+      message: 'If the email exists, a password reset link has been sent.' 
+    };
+  }
+
+  async resetPassword(token: string, newPassword: string) {
+    // Find user by reset token
+    const user = await this.userService.findOne({
+      where: { resetPasswordToken: token },
+    });
+
+    if (!user) {
+      throw new BadRequestException('Invalid or expired reset token');
+    }
+
+    // Check if token is expired
+    if (!user.resetPasswordExpires || user.resetPasswordExpires < new Date()) {
+      throw new BadRequestException('Reset token has expired');
+    }
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update user password and clear reset token
+    await this.userService.update(user.id, {
+      password: hashedPassword,
+      resetPasswordToken: undefined,
+      resetPasswordExpires: undefined,
+    });
+
+    this.logger.log(`Password reset successfully for user ${user.id}`);
+
+    // Send confirmation email
+    try {
+      await this.emailService.sendPasswordChangedEmail(user.email, user.name);
+    } catch (error) {
+      this.logger.error(`Failed to send password changed email to ${user.email}:`, error);
+    }
+
+    return { message: 'Password has been reset successfully. You can now log in with your new password.' };
   }
 
   async login(loginDto: LoginDto) {
@@ -176,7 +248,11 @@ export class AuthService {
     }
 
     if (!user.isActive) {
-      throw new UnauthorizedException('User account is disabled');
+      throw new UnauthorizedException('Please verify your email before logging in');
+    }
+
+    if (!user.emailVerified) {
+      throw new UnauthorizedException('Please verify your email before logging in');
     }
 
     return user;

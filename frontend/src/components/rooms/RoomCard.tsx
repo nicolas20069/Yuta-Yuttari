@@ -1,49 +1,48 @@
 import React from 'react';
-import { Box, Card, CardContent, Typography, Button } from '@mui/material';
-import ImagePlaceholder from '../common/ImagePlaceholder';
-import BedIcon from '@mui/icons-material/Bed';
-import WifiIcon from '@mui/icons-material/Wifi';
-import AcUnitIcon from '@mui/icons-material/AcUnit';
+import { Card, CardContent, Typography, Button, Box, Rating } from '@mui/material';
 
 interface RoomCardProps {
-    title: string;
-    price: string; // Formatted price e.g. "$ 1.200.000"
-    imageText?: string;
+  name: string;
+  price: number;
+  rating?: number;
+  description?: string;
+  onSelect?: () => void;
 }
 
-const RoomCard: React.FC<RoomCardProps> = ({ title, price, imageText }) => {
-    return (
-        <Card sx={{ borderRadius: 2, boxShadow: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
-            <Box sx={{ height: 250, position: 'relative' }}>
-                <ImagePlaceholder height="100%" text={imageText || title} borderRadius={0} />
-            </Box>
-
-            <CardContent sx={{ flexGrow: 1 }}>
-                <Typography variant="h6" fontWeight="bold" gutterBottom>
-                    {title}
-                </Typography>
-                <Typography variant="body1" fontWeight="bold" color="text.primary" sx={{ mb: 2 }}>
-                    {price}
-                </Typography>
-
-                <Box sx={{ display: 'flex', gap: 2, color: 'text.secondary', mb: 3 }}>
-                    {/* Iconos de características simulados */}
-                    <WifiIcon fontSize="small" />
-                    <AcUnitIcon fontSize="small" />
-                    <BedIcon fontSize="small" />
-                </Box>
-
-                <Button
-                    variant="contained"
-                    color="success"
-                    fullWidth
-                    sx={{ fontWeight: 'bold' }}
-                >
-                    RESERVA YA
-                </Button>
-            </CardContent>
-        </Card>
-    );
+const RoomCard: React.FC<RoomCardProps> = ({
+  name,
+  price,
+  rating = 4.5,
+  description = 'Habitación cómoda y acogedora',
+  onSelect,
+}) => {
+  return (
+    <Card sx={{ '&:hover': { boxShadow: 8, transform: 'translateY(-5px)' }, transition: 'all 0.3s' }}>
+      <Box sx={{ backgroundColor: '#f0f0f0', height: '200px' }} />
+      <CardContent>
+        <Typography variant="h6" sx={{ fontWeight: 'bold', marginBottom: '10px' }}>
+          {name}
+        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+          <Rating value={rating} readOnly size="small" />
+          <Typography variant="body2" color="textSecondary" sx={{ marginLeft: '10px' }}>
+            ({rating})
+          </Typography>
+        </Box>
+        <Typography variant="body2" color="textSecondary" sx={{ marginBottom: '15px' }}>
+          {description}
+        </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Typography variant="h6" color="primary" sx={{ fontWeight: 'bold' }}>
+            ${price}/noche
+          </Typography>
+          <Button variant="contained" size="small" onClick={onSelect}>
+            Reservar
+          </Button>
+        </Box>
+      </CardContent>
+    </Card>
+  );
 };
 
 export default RoomCard;

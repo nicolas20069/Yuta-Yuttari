@@ -1,64 +1,27 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
-import ImagePlaceholder from './ImagePlaceholder';
 
 interface PageHeaderProps {
-    title: string;
-    subtitle?: string;
-    imageText?: string;
+  title: string;
+  subtitle?: string;
 }
 
-const PageHeader: React.FC<PageHeaderProps> = ({ title, subtitle, imageText }) => {
-    return (
-        <Box sx={{ position: 'relative', height: 350, color: 'white', mb: 8 }}>
-            {/* Background Image Placeholder */}
-            {/* 
-                En el futuro, esto se reemplazará por una URL de imagen real pasada como prop (backgroundImageUrl).
-            */}
-            <Box
-                sx={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    height: '100%',
-                    zIndex: -1
-                }}
-            >
-                <ImagePlaceholder
-                    height="100%"
-                    text={imageText || `${title} Background`}
-                    borderRadius={0}
-                />
-            </Box>
-
-            {/* Overlay */}
-            <Box
-                sx={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    height: '100%',
-                    bgcolor: 'rgba(0,0,0,0.5)', // Oscurecer la imagen para legibilidad
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    textAlign: 'center'
-                }}
-            >
-                <Typography variant="h2" fontWeight="bold" gutterBottom>
-                    {title}
-                </Typography>
-                {subtitle && (
-                    <Typography variant="h6" sx={{ maxWidth: 800, px: 2 }}>
-                        {subtitle}
-                    </Typography>
-                )}
-            </Box>
-        </Box>
-    );
+const PageHeader: React.FC<PageHeaderProps> = ({ title, subtitle }) => {
+  return (
+    <Box
+      sx={{
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        color: 'white',
+        padding: '60px 20px',
+        textAlign: 'center',
+      }}
+    >
+      <Typography variant="h3" sx={{ fontWeight: 'bold', marginBottom: '10px' }}>
+        {title}
+      </Typography>
+      {subtitle && <Typography variant="h6">{subtitle}</Typography>}
+    </Box>
+  );
 };
 
 export default PageHeader;

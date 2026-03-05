@@ -22,12 +22,18 @@ export class UserService {
     });
   }
 
+  async findOne(options: any): Promise<User | null> {
+    return this.userRepository.findOne(options);
+  }
+
   async create(data: {
     email: string;
     password: string;
     name: string;
     phone?: string;
     isActive?: boolean;
+    emailVerified?: boolean;
+    emailVerificationToken?: string;
   }): Promise<User> {
     const user = this.userRepository.create(data);
     return this.userRepository.save(user);

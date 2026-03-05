@@ -1,63 +1,39 @@
-import { Component } from "react";
-import type { ErrorInfo, ReactNode } from "react";
-import { Box, Typography, Button } from "@mui/material";
+import React, { type ReactNode } from 'react';
 
-interface Props {
-    children: ReactNode;
+interface ErrorBoundaryProps {
+  children: ReactNode;
 }
 
-interface State {
-    hasError: boolean;
-    error: Error | null;
+interface ErrorBoundaryState {
+  hasError: boolean;
 }
 
-class ErrorBoundary extends Component<Props, State> {
-    public state: State = {
-        hasError: false,
-        error: null,
-    };
+class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
+    super(props);
+    this.state = { hasError: false };
+  }
 
-    public static getDerivedStateFromError(error: Error): State {
-        return { hasError: true, error };
+  static getDerivedStateFromError(): ErrorBoundaryState {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('Error caught:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ padding: '20px', textAlign: 'center' }}>
+          <h1>Algo salió mal</h1>
+          <p>Por favor, actualiza la página e intenta de nuevo.</p>
+        </div>
+      );
     }
 
-    public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-        console.error("Uncaught error:", error, errorInfo);
-    }
-
-    public render() {
-        if (this.state.hasError) {
-            return (
-                <Box
-                    sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        height: "100vh",
-                        p: 3,
-                        textAlign: "center",
-                    }}
-                >
-                    <Typography variant="h4" color="error" gutterBottom>
-                        Ha ocurrido un error.
-                    </Typography>
-                    <Typography variant="body1" color="textSecondary" sx={{ mb: 2 }}>
-                        {this.state.error?.message}
-                    </Typography>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={() => window.location.reload()}
-                    >
-                        Recargar página
-                    </Button>
-                </Box>
-            );
-        }
-
-        return this.props.children;
-    }
+    return this.props.children;
+  }
 }
 
 export default ErrorBoundary;

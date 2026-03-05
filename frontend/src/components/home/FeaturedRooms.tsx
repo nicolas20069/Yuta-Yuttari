@@ -1,59 +1,63 @@
 import React from 'react';
-import { Box, Container, Typography, Grid, Card, CardContent, Button } from '@mui/material';
-import ImagePlaceholder from '../common/ImagePlaceholder';
+import { Box, Container, Card, CardContent, Typography, Button } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const FeaturedRooms: React.FC = () => {
-    const rooms = [
-        { id: 1, name: 'Televisión, toallas y desayuno', label: 'Disponible' },
-        { id: 2, name: 'Televisión, vista a la ciudad, baño privado', label: 'Disponible' },
-        { id: 3, name: 'Televisión, toallas, comidas, refrigerador, jacuzzi, servicio al cuarto', label: '¡Solo por hoy!' },
-    ];
+  const navigate = useNavigate();
 
-    return (
-        <Box sx={{ py: 8, bgcolor: '#f5f5f5', backgroundImage: 'url("path/to/dark-pattern-bg")', backgroundSize: 'cover' }}>
-            <Box sx={{
-                py: 8,
-                px: 2,
-                background: 'linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7))',
-                color: 'white',
-                textAlign: 'center'
-            }}>
-                <Typography variant="h4" fontWeight="bold" gutterBottom>
-                    Habitaciones Lujosas
-                </Typography>
-                <Typography variant="body1">
-                    Todo el confort, en una habitación.
-                </Typography>
-            </Box>
+  const rooms = [
+    {
+      id: 1,
+      name: 'Habitación Estándar',
+      price: '$50/noche',
+      image: '🛏️',
+    },
+    {
+      id: 2,
+      name: 'Habitación Deluxe',
+      price: '$100/noche',
+      image: '🛏️',
+    },
+    {
+      id: 3,
+      name: 'Suite Presidencial',
+      price: '$200/noche',
+      image: '🛏️',
+    },
+  ];
 
-            <Container maxWidth="lg" sx={{ mt: -5 }}>
-                <Grid container spacing={4}>
-                    {rooms.map((room) => (
-                        <Grid size={{ xs: 12, md: 4 }} key={room.id}>
-                            <Card sx={{ borderRadius: 2, overflow: 'hidden' }}>
-                                <Box sx={{ position: 'relative' }}>
-                                    <ImagePlaceholder height={250} text="Room Image" />
-                                    <Button
-                                        variant="contained"
-                                        color="success"
-                                        size="small"
-                                        sx={{ position: 'absolute', top: 16, right: 16, textTransform: 'none' }}
-                                    >
-                                        {room.label}
-                                    </Button>
-                                </Box>
-                                <CardContent>
-                                    <Typography variant="body2" color="textSecondary">
-                                        {room.name}
-                                    </Typography>
-                                </CardContent>
-                            </Card>
-                        </Grid>
-                    ))}
-                </Grid>
-            </Container>
-        </Box>
-    );
+  return (
+    <Container maxWidth="lg" sx={{ paddingY: '80px' }}>
+      <Typography variant="h3" sx={{ textAlign: 'center', fontWeight: 'bold', marginBottom: '50px' }}>
+        Habitaciones Destacadas
+      </Typography>
+      <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 3 }}>
+        {rooms.map((room) => (
+            <Card sx={{ '&:hover': { boxShadow: 8, transform: 'translateY(-5px)' }, transition: 'all 0.3s' }}>
+              <Box sx={{ fontSize: '60px', textAlign: 'center', padding: '20px', backgroundColor: '#f5f5f5' }}>
+                {room.image}
+              </Box>
+              <CardContent>
+                <Typography variant="h6" sx={{ fontWeight: 'bold', marginBottom: '10px' }}>
+                  {room.name}
+                </Typography>
+                <Typography variant="body2" color="primary" sx={{ marginBottom: '10px' }}>
+                  {room.price}
+                </Typography>
+                <Button
+                  variant="contained"
+                  fullWidth
+                  onClick={() => navigate('/rooms')}
+                >
+                  Ver Detalles
+                </Button>
+              </CardContent>
+            </Card>
+          ))
+        }
+      </Box>
+    </Container>
+  );
 };
 
 export default FeaturedRooms;

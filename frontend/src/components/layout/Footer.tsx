@@ -1,87 +1,90 @@
 import React from 'react';
-import { Box, Container, Grid, Typography, Link, TextField, Button } from '@mui/material';
+import { Box, Container, Typography, Link } from '@mui/material';
 
 const Footer: React.FC = () => {
-    return (
-        <Box
-            component="footer"
-            sx={{
-                py: 6,
-                px: 2,
-                mt: 'auto',
-                backgroundColor: '#002B5B',
-                color: 'white'
-            }}
-        >
-            <Container maxWidth="lg">
-                <Grid container spacing={4}>
-                    <Grid size={{ xs: 12, sm: 3 }}>
-                        <Typography variant="h6" color="inherit" gutterBottom>
-                            Tuta Yuttari
-                        </Typography>
-                        <Typography variant="body2" color="rgba(255, 255, 255, 0.7)">
-                            El servicio del Hotel Tuta Yuttari fue excepcional. No hubo problemas, no hubo problemas.
-                        </Typography>
-                    </Grid>
+  const currentYear = new Date().getFullYear();
 
-                    <Grid size={{ xs: 12, sm: 2 }}>
-                        <Typography variant="h6" color="inherit" gutterBottom>
-                            Links
-                        </Typography>
-                        <Link href="#" color="inherit" display="block" underline="hover" sx={{ mb: 1 }}>Reservar Habitación</Link>
-                        <Link href="#" color="inherit" display="block" underline="hover" sx={{ mb: 1 }}>Habitaciones</Link>
-                        <Link href="#" color="inherit" display="block" underline="hover" sx={{ mb: 1 }}>Contacto</Link>
-                        <Link href="#" color="inherit" display="block" underline="hover" sx={{ mb: 1 }}>Explorar</Link>
-                    </Grid>
+  return (
+    <Box
+      component="footer"
+      sx={{
+        backgroundColor: '#333',
+        color: '#fff',
+        padding: '40px 0 20px',
+        marginTop: '60px',
+      }}
+    >
+      <Container maxWidth="lg">
+        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 4, marginBottom: '30px' }}>
+          <Box>
+            <Typography variant="h6" sx={{ marginBottom: '15px' }}>
+              Sobre Nosotros
+            </Typography>
+            <Link href="#" color="inherit" sx={{ display: 'block', marginBottom: '8px' }}>
+              Nuestra Historia
+            </Link>
+            <Link href="#" color="inherit" sx={{ display: 'block', marginBottom: '8px' }}>
+              Nuestro Equipo
+            </Link>
+            <Link href="#" color="inherit" sx={{ display: 'block' }}>
+              Empleos
+            </Link>
+          </Box>
 
-                    <Grid size={{ xs: 12, sm: 2 }}>
-                        <Typography variant="h6" color="inherit" gutterBottom>
-                            Compañía
-                        </Typography>
-                        <Link href="#" color="inherit" display="block" underline="hover" sx={{ mb: 1 }}>Política de privacidad</Link>
-                        <Link href="#" color="inherit" display="block" underline="hover" sx={{ mb: 1 }}>Política de reembolso</Link>
-                        <Link href="#" color="inherit" display="block" underline="hover" sx={{ mb: 1 }}>F.A.Q</Link>
-                        <Link href="#" color="inherit" display="block" underline="hover" sx={{ mb: 1 }}>Nosotros</Link>
-                    </Grid>
+          <Box>
+            <Typography variant="h6" sx={{ marginBottom: '15px' }}>
+              Servicio al Cliente
+            </Typography>
+            <Link href="#" color="inherit" sx={{ display: 'block', marginBottom: '8px' }}>
+              Contacto
+            </Link>
+            <Link href="#" color="inherit" sx={{ display: 'block', marginBottom: '8px' }}>
+              Preguntas Frecuentes
+            </Link>
+            <Link href="#" color="inherit" sx={{ display: 'block' }}>
+              Soporte
+            </Link>
+          </Box>
 
-                    <Grid size={{ xs: 12, sm: 2 }}>
-                        <Typography variant="h6" color="inherit" gutterBottom>
-                            Redes Sociales
-                        </Typography>
-                        <Link href="#" color="inherit" display="block" underline="hover" sx={{ mb: 1 }}>Facebook</Link>
-                        <Link href="#" color="inherit" display="block" underline="hover" sx={{ mb: 1 }}>X</Link>
-                        <Link href="#" color="inherit" display="block" underline="hover" sx={{ mb: 1 }}>Instagram</Link>
-                        <Link href="#" color="inherit" display="block" underline="hover" sx={{ mb: 1 }}>LinkedIn</Link>
-                    </Grid>
+          <Box>
+            <Typography variant="h6" sx={{ marginBottom: '15px' }}>
+              Políticas
+            </Typography>
+            <Link href="#" color="inherit" sx={{ display: 'block', marginBottom: '8px' }}>
+              Términos de Servicio
+            </Link>
+            <Link href="#" color="inherit" sx={{ display: 'block', marginBottom: '8px' }}>
+              Política de Privacidad
+            </Link>
+            <Link href="#" color="inherit" sx={{ display: 'block' }}>
+              Política de Cookies
+            </Link>
+          </Box>
 
-                    <Grid size={{ xs: 12, sm: 3 }}>
-                        <Typography variant="h6" color="inherit" gutterBottom>
-                            Newsletter
-                        </Typography>
-                        <Typography variant="body2" color="rgba(255, 255, 255, 0.7)" sx={{ mb: 2 }}>
-                            Suscríbete al newsletter para conocer sobre promociones, novedades y mucho más!
-                        </Typography>
-                        <Box component="form" sx={{ display: 'flex', bgcolor: 'white', borderRadius: 1, p: 0.5 }}>
-                            <TextField
-                                variant="standard"
-                                placeholder="Ingresa tu correo"
-                                InputProps={{ disableUnderline: true, sx: { pl: 1 } }}
-                                fullWidth
-                            />
-                            <Button variant="contained" color="success" size="small" sx={{ borderRadius: 1 }}>
-                                Suscribirse
-                            </Button>
-                        </Box>
-                    </Grid>
-                </Grid>
-                <Box mt={5}>
-                    <Typography variant="body2" color="rgba(255, 255, 255, 0.5)" align="center">
-                        {'Tuta Yuttari © '} {new Date().getFullYear()}
-                    </Typography>
-                </Box>
-            </Container>
+          <Box>
+            <Typography variant="h6" sx={{ marginBottom: '15px' }}>
+              Síguenos
+            </Typography>
+            <Link href="#" color="inherit" sx={{ display: 'block', marginBottom: '8px' }}>
+              Facebook
+            </Link>
+            <Link href="#" color="inherit" sx={{ display: 'block', marginBottom: '8px' }}>
+              Twitter
+            </Link>
+            <Link href="#" color="inherit" sx={{ display: 'block' }}>
+              Instagram
+            </Link>
+          </Box>
         </Box>
-    );
+
+        <Box sx={{ borderTop: '1px solid #555', paddingTop: '20px', textAlign: 'center' }}>
+          <Typography variant="body2">
+            &copy; {currentYear} Yuta & Yuttari. Todos los derechos reservados.
+          </Typography>
+        </Box>
+      </Container>
+    </Box>
+  );
 };
 
 export default Footer;
