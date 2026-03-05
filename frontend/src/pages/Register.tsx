@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Box, Button, Container, TextField, Typography, Paper, Divider, Stack } from '@mui/material';
+import { Box, Button, Container, TextField, Typography, Paper, Divider, Stack, InputAdornment, IconButton } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { registerUser } from '../services/authService';
 import { getApiBaseUrl } from '../services/api';
 import googleIcon from '../assets/icons_google.svg';
@@ -11,10 +12,15 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
   const navigate = useNavigate();
+
+  const handleTogglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -114,11 +120,24 @@ const Register = () => {
               fullWidth
               name="password"
               label="Contraseña"
-              type="password"
+              type={showPassword ? "text" : "password"}
               id="password"
               helperText="Mínimo 6 caracteres"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={handleTogglePasswordVisibility}
+                      edge="end"
+                      sx={{ cursor: 'pointer' }}
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             />
 
             {error && (

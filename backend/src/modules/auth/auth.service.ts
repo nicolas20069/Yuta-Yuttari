@@ -249,13 +249,14 @@ export class AuthService {
       return null;
     }
 
-    if (!user.isActive) {
-      throw new UnauthorizedException('Please verify your email before logging in');
-    }
+    // TODO: Descomentar estas validaciones cuando se implemente verificación de correo real
+    // if (!user.isActive) {
+    //   throw new UnauthorizedException('Please verify your email before logging in');
+    // }
 
-    if (!user.emailVerified) {
-      throw new UnauthorizedException('Please verify your email before logging in');
-    }
+    // if (!user.emailVerified) {
+    //   throw new UnauthorizedException('Please verify your email before logging in');
+    // }
 
     return user;
   }

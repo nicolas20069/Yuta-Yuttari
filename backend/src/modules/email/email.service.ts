@@ -208,7 +208,8 @@ export class EmailService {
       this.logger.log(`Email de verificación enviado a ${email}`);
     } catch (error) {
       this.logger.error(`Error al enviar email de verificación a ${email}:`, error);
-      throw new Error('No se pudo enviar el email de verificación');
+      // No throw - email service is optional and shouldn't block registration
+      // User can request resend verification later if needed
     }
   }
 
@@ -279,7 +280,7 @@ export class EmailService {
       this.logger.log(`Email de recuperación de contraseña enviado a ${email}`);
     } catch (error) {
       this.logger.error(`Error al enviar email de recuperación a ${email}:`, error);
-      throw new Error('No se pudo enviar el email de recuperación');
+      // No throw - email service is optional
     }
   }
 
@@ -337,7 +338,7 @@ export class EmailService {
       this.logger.log(`Email de confirmación de cambio de contraseña enviado a ${email}`);
     } catch (error) {
       this.logger.error(`Error al enviar email de confirmación a ${email}:`, error);
-      throw new Error('No se pudo enviar el email de confirmación');
+      // No throw - email service is optional
     }
   }
 
