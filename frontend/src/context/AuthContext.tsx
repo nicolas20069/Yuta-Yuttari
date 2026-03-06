@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { getProfile } from '../services/authService';
-import { setAuthToken } from '../services/api';
+import { setAuthToken, getApiBaseUrl } from '../services/api';
 import { toast } from 'react-toastify';
 
 interface User {
@@ -9,6 +9,7 @@ interface User {
   name?: string;
   phone?: string;
   isActive?: boolean;
+  avatar?: string;
 }
 
 interface AuthContextType {
@@ -33,13 +34,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (token) {
         try {
           console.log('[AuthContext] Token found, attempting to fetch profile...');
-          setAuthToken(token); // Ensure token is set in axios headers BEFORE fetching profile
+          setAuthToken(token);
           const { user: userData } = await getProfile();
+          
+          // Construir URL completa del avatar si es relativa
+          if (userData.avatar && !userData.avatar.startsWith('http')) {
+            userData.avatar = getApiBaseUrl().replace('/api', '') + userData.avatar;
+          }
+          
           console.log('[AuthContext] Profile fetched successfully:', userData);
           setUser(userData);
         } catch (error) {
           console.error('[AuthContext] Error fetching user profile:', error);
-          // Token inválido o expirado, limpiar
           localStorage.removeItem('auth_token');
           setAuthToken(null);
           setUser(null);
@@ -57,10 +63,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setAuthToken(token);
     // Then save to localStorage
     localStorage.setItem('auth_token', token);
+    localStorage.setItem('userName', userData.name || '');
+    
+    // Construir URL completa del avatar si es relativa
+    if (userData.avatar && !userData.avatar.startsWith('http')) {
+      userData.avatar = getApiBaseUrl().replace('/api', '') + userData.avatar;
+    }
+    
+    if (userData.avatar) {
+      localStorage.setItem('userAvatar', userData.avatar);
+    }
     // Finally update user state
     setUser(userData);
     toast.success(`¡Bienvenido, ${userData.name}!`);
     console.log('[AuthContext] User logged in successfully');
+    
+    // Refrescar perfil completo en background para obtener avatar y otros datos
+    setTimeout(() => {
+      refreshUser().catch(err => console.error('Error refreshing user after login:', err));
+    }, 100);
   };
 
   const logout = () => {
@@ -74,7 +95,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       console.log('[AuthContext] Refreshing user profile...');
       const { user: userData } = await getProfile();
+      
+      // Construir URL completa del avatar si es relativa
+      if (userData.avatar && !userData.avatar.startsWith('http')) {
+        userData.avatar = getApiBaseUrl().replace('/api', '') + userData.avatar;
+      }
+      
       setUser(userData);
+      localStorage.setItem('userName', userData.name || '');
+      if (userData.avatar) {
+        localStorage.setItem('userAvatar', userData.avatar);
+      }
       console.log('[AuthContext] User profile refreshed:', userData);
     } catch (error) {
       console.error('[AuthContext] Error refreshing user:', error);

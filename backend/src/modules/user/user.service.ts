@@ -1,7 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import type { Multer } from 'multer';
 import { User } from './entities/user.entity';
+import * as path from 'path';
 
 @Injectable()
 export class UserService {
@@ -53,5 +55,20 @@ export class UserService {
     return this.userRepository.find({
       where: { isActive: true },
     });
+  }
+
+  async uploadAvatar(userId: string, file: Multer.File): Promise<User> {
+    const user = await this.findById(userId);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    // El archivo ya fue guardado por multer en diskStorage
+    // Solo necesitamos actualizar la URL en la base de datos
+    const filename = path.basename(file.path);
+    
+    // Update user with avatar URL
+    user.avatar = `/uploads/${filename}`;
+    return this.userRepository.save(user);
   }
 }

@@ -79,7 +79,7 @@ export const getReservas = async (filters?: ReservaFilters): Promise<Reserva[]> 
   if (filters?.userId) params.append('userId', filters.userId);
   
   const queryString = params.toString();
-  const url = queryString ? `/api/reservas?${queryString}` : '/api/reservas';
+  const url = queryString ? `/reservas?${queryString}` : '/reservas';
   
   const response = await api.get<Reserva[]>(url);
   return response.data;
@@ -89,7 +89,7 @@ export const getReservas = async (filters?: ReservaFilters): Promise<Reserva[]> 
  * Obtener mis reservas (usuario autenticado)
  */
 export const getMisReservas = async (): Promise<Reserva[]> => {
-  const response = await api.get<Reserva[]>('/api/reservas/mis-reservas');
+  const response = await api.get<Reserva[]>('/reservas/mis-reservas');
   return response.data;
 };
 
@@ -97,7 +97,7 @@ export const getMisReservas = async (): Promise<Reserva[]> => {
  * Obtener una reserva por ID
  */
 export const getReservaById = async (id: string): Promise<Reserva> => {
-  const response = await api.get<Reserva>(`/api/reservas/${id}`);
+  const response = await api.get<Reserva>(`/reservas/${id}`);
   return response.data;
 };
 
@@ -105,7 +105,7 @@ export const getReservaById = async (id: string): Promise<Reserva> => {
  * Crear una nueva reserva
  */
 export const createReserva = async (data: CreateReservaDto): Promise<Reserva> => {
-  const response = await api.post<Reserva>('/api/reservas', data);
+  const response = await api.post<Reserva>('/reservas', data);
   return response.data;
 };
 
@@ -116,7 +116,7 @@ export const updateReserva = async (
   id: string,
   data: UpdateReservaDto
 ): Promise<Reserva> => {
-  const response = await api.patch<Reserva>(`/api/reservas/${id}`, data);
+  const response = await api.patch<Reserva>(`/reservas/${id}`, data);
   return response.data;
 };
 
@@ -124,7 +124,7 @@ export const updateReserva = async (
  * Cancelar una reserva
  */
 export const cancelarReserva = async (id: string): Promise<Reserva> => {
-  const response = await api.patch<Reserva>(`/api/reservas/${id}/cancelar`);
+  const response = await api.patch<Reserva>(`/reservas/${id}/cancelar`);
   return response.data;
 };
 
@@ -132,7 +132,7 @@ export const cancelarReserva = async (id: string): Promise<Reserva> => {
  * Confirmar una reserva (solo admin)
  */
 export const confirmarReserva = async (id: string): Promise<Reserva> => {
-  const response = await api.patch<Reserva>(`/api/reservas/${id}/confirmar`);
+  const response = await api.patch<Reserva>(`/reservas/${id}/confirmar`);
   return response.data;
 };
 
@@ -140,7 +140,7 @@ export const confirmarReserva = async (id: string): Promise<Reserva> => {
  * Eliminar una reserva (solo admin)
  */
 export const deleteReserva = async (id: string): Promise<void> => {
-  await api.delete(`/api/reservas/${id}`);
+  await api.delete(`/reservas/${id}`);
 };
 
 /**
@@ -151,7 +151,7 @@ export const verificarDisponibilidad = async (
   horaInicio: string,
   horaFin: string
 ): Promise<{ disponible: boolean; mensaje?: string }> => {
-  const response = await api.post('/api/reservas/verificar-disponibilidad', {
+  const response = await api.post('/reservas/verificar-disponibilidad', {
     fechaReserva,
     horaInicio,
     horaFin,
@@ -169,6 +169,6 @@ export const getReservasEstadisticas = async (): Promise<{
   canceladas: number;
   completadas: number;
 }> => {
-  const response = await api.get('/api/reservas/estadisticas');
+  const response = await api.get('/reservas/estadisticas');
   return response.data;
 };

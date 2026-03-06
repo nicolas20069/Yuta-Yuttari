@@ -12,6 +12,10 @@ const Navbar: React.FC = () => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
+  React.useEffect(() => {
+    console.log('[Navbar] User updated:', user?.email, 'Avatar:', user?.avatar);
+  }, [user?.avatar, user?.id]);
+
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -114,17 +118,22 @@ const Navbar: React.FC = () => {
             {user ? (
               <>
                 <Avatar
+                  src={user.avatar || localStorage.getItem('userAvatar') || undefined}
+                  alt={user.name || user.email}
                   sx={{ 
                     marginLeft: '8px',
                     cursor: 'pointer', 
                     backgroundColor: '#1976d2',
                     width: 40,
                     height: 40,
-                    fontSize: '0.9rem'
+                    fontSize: '0.9rem',
+                    img: {
+                      objectFit: 'cover'
+                    }
                   }}
                   onClick={handleMenuOpen}
                 >
-                  {user.email?.charAt(0).toUpperCase()}
+                  {!user.avatar && !localStorage.getItem('userAvatar') ? user.email?.charAt(0).toUpperCase() : null}
                 </Avatar>
                 <Menu
                   anchorEl={anchorEl}

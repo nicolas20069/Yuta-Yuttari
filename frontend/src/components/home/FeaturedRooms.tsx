@@ -33,7 +33,7 @@ const FeaturedRooms: React.FC = () => {
       </Typography>
       <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 3 }}>
         {rooms.map((room) => (
-            <Card sx={{ '&:hover': { boxShadow: 8, transform: 'translateY(-5px)' }, transition: 'all 0.3s' }}>
+            <Card key={room.id} sx={{ '&:hover': { boxShadow: 8, transform: 'translateY(-5px)' }, transition: 'all 0.3s' }}>
               <Box sx={{ fontSize: '60px', textAlign: 'center', padding: '20px', backgroundColor: '#f5f5f5' }}>
                 {room.image}
               </Box>

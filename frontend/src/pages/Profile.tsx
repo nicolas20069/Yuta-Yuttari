@@ -6,26 +6,33 @@ import HotelIcon from "@mui/icons-material/Hotel";
 import HomeIcon from "@mui/icons-material/Home";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import "../styles/profile.css";
-import axios from "axios";
+import api, { getApiBaseUrl } from "../services/api";
+import { useAuth } from "../context/AuthContext";
 
 const Profile = () => {
-  const [avatar, setAvatar] = useState<string | null>(null);
   const [userName, setUserName] = useState<string>("");
   const [error, setError] = useState("");
   const [showToast, setShowToast] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const { logout, user, refreshUser } = useAuth();
 
   useEffect(() => {
-    const storedName = localStorage.getItem("userName");
-    if (storedName) setUserName(storedName);
+    const storedName = localStorage.getItem("userName") || user?.name || "Usuario";
+    setUserName(storedName);
 
-    const storedAvatar = localStorage.getItem("userAvatar");
-    if (storedAvatar) setAvatar(storedAvatar);
-  }, []);
+    // Asegurar que el token esté en los headers de axios
+    const token = localStorage.getItem('auth_token');
+    if (token) {
+      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      console.log('[Profile] Token loaded from localStorage and set in axios headers');
+    } else {
+      console.warn('[Profile] No token found in localStorage!');
+    }
+  }, [user?.name]);
 
   const handleLogout = () => {
-    localStorage.removeItem("authToken");
+    logout();
     localStorage.removeItem("userName");
     localStorage.removeItem("userAvatar");
     navigate("/login");
@@ -35,26 +42,69 @@ const Profile = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Límites
+    const maxFileSize = 5 * 1024 * 1024; // 5MB
+    const allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+
+    // Validar que sea una imagen
+    if (!file.type.startsWith('image/')) {
+      setError("❌ Por favor selecciona una imagen válida (JPG, PNG, GIF, WebP)");
+      return;
+    }
+
+    // Validar MIME type
+    if (!allowedMimes.includes(file.type)) {
+      setError(`❌ Tipo de archivo no permitido: ${file.type}. Solo se aceptan: JPG, PNG, GIF, WebP`);
+      return;
+    }
+
+    // Validar extensión
+    const fileExt = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+    if (!allowedExtensions.includes(fileExt)) {
+      setError(`❌ Extensión no permitida: ${fileExt}. Solo se aceptan: ${allowedExtensions.join(', ')}`);
+      return;
+    }
+
+    // Validar tamaño
+    if (file.size > maxFileSize) {
+      setError(`❌ Archivo demasiado grande. Tamaño máximo: 5MB. Tu archivo: ${(file.size / 1024 / 1024).toFixed(2)}MB`);
+      return;
+    }
+
     const formData = new FormData();
     formData.append("avatar", file);
 
     try {
-      const token = localStorage.getItem("authToken");
-      const response = await axios.post("http://localhost:3000/api/user/avatar", formData, {
+      // Debug: verificar token antes de subir
+      console.log('[Profile] Token:', localStorage.getItem('auth_token')?.substring(0, 20) + '...' || 'NO TOKEN');
+      console.log('[Profile] Authorization header:', api.defaults.headers.common['Authorization'] || 'NO HEADER');
+      
+      const response = await api.post("/user/avatar", formData, {
         headers: {
-          Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
         },
       });
 
-      setAvatar(response.data.url);
-      localStorage.setItem("userAvatar", response.data.url);
-      setError("");
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 4000);
-    } catch (err) {
+      if (response.data.url) {
+        // Construir URL completa si es relativa
+        const fullUrl = response.data.url.startsWith('http') 
+          ? response.data.url 
+          : getApiBaseUrl().replace('/api', '') + response.data.url;
+        
+        localStorage.setItem("userAvatar", fullUrl);
+        setError("");
+        setShowToast(true);
+        
+        // Refrescar el contexto para actualizar el avatar globalmente
+        await refreshUser();
+        
+        setTimeout(() => setShowToast(false), 4000);
+      }
+    } catch (err: any) {
       console.error("Error al subir imagen:", err);
-      setError("Error al subir la imagen");
+      const errorMessage = err.response?.data?.message || err.message || "Error al subir la imagen";
+      setError(`❌ ${errorMessage}`);
     }
   };
 
@@ -64,7 +114,7 @@ const Profile = () => {
         <div className="profile-header">
           <label htmlFor="avatar-upload" className="profile-avatar-wrapper">
             <img
-              src={avatar || "/avatar.png"}
+              src={user?.avatar || localStorage.getItem("userAvatar") || "/avatar.png"}
               alt="Perfil"
               className="profile-avatar"
             />

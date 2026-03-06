@@ -57,6 +57,9 @@ export class User {
   @Column({ default: true, name: 'isActive' })
   isActive: boolean;
 
+  @Column({ nullable: true, type: 'text' })
+  avatar: string;
+
   @CreateDateColumn()
   createdAt: Date;
 
