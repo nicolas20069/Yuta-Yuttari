@@ -21,6 +21,9 @@ import { ReservaModule } from './modules/reserva/reservas.module';
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: envs.DB_SYNC || false, // Set to false in production
       logging: true,
+      ssl: {
+        rejectUnauthorized: false, // conexion ssl para mysql en Aiven
+      }
     }),
     AuthModule,
     UserModule,
